@@ -19,6 +19,9 @@ You should see the various options for the demokit in your Heroku CLI now.
 ### demokit:apps 
 TODO - implement
 
+Display a table of sumamrised app usage for a particular team. 
+Shows apps total, apps with code, language totals and apps that are empty.
+
 ```
 > heroku demokit:apps                   # Count and list all the apps that exist for a given Team.
 ```
@@ -26,28 +29,38 @@ This command will list all the apps with a nice summary of apps created. It is q
 
 ### demokit:apps:delete
 TODO - implement
+
+Deletes all apps for a Team. The idea of this is to be used at the end of the day when all apps need to be destroyed to save resources. 
+Include a -f --filter flag that allows a user to filter out apps (i.e. keep all apps where name contains '401')
+
 ```
 > heroku demokit:apps:delete            # Will delete all apps in the given Team.
 ```
 
 ### demokit:apps:scaleToZero
 TODO - implement
+Scale all dynos in all apps that are listed for a team to zero. You may not want to delete apps, but want to stop incuring cost.
+```
 heroku demokit:apps:scaleToZero       # Will loop through all apps in the given Team and scale all dynos to zero.
+```
 
 ### demokit:resources
 TODO - implement
+
+Display a table of all resources, by dyno, data and partner addons. The goal is to be able to get a summary of the total resource breakdown.
 ```
 heroku demokit:resources              # Provides an output of currently used resources for this Team.
 ```
 
 ### demokit:users
 TODO - implement
+This is just functionality that is repeated with heroku members command.. probably won't implement
 ```
 heroku demokit:users                  # Count and list all the users that have access to the given Team.
 ```
 
 ### demokit:users:invite
-TODO - implement
+
 ```
 > heroku demokit:users:invite -t <TEAM> -f <path to user file>          # Will invite a list of users to the specified team.
 ```
