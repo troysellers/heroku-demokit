@@ -1,18 +1,21 @@
 'use strict'
 
-const co = require('co')
-const cli= require('heroku-cli-util')
+const cli = require('heroku-cli-util');
+const co = require('co');
+
+function * app(context, heroku)  {
+   cli.error("demokit:apps has yet to be implemented.... ");
+}
 
 module.exports = {
    topic: 'demokit',
    command: 'apps',
    description: 'Count and list all the apps that exist for a given Team.',
    help: '\
-   Usage: heroku demokit:apps -t --team <TEAM NAME>\
-   If team is ommitted, will revert to your Personal Apps',
-   needsApp: false,
+   Usage: heroku demokit:apps -t --team <TEAM NAME>',
    needsAuth: true,
-   run: function(context) {
-      console.log('TODO : Implement demokit:apps -t <TEAM>')
-   }
+   flags: [
+      {name:'team', char:'t', description:'team to invite users to', hasValue:true}
+   ],   
+   run: cli.command(co.wrap(app))
 }

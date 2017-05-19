@@ -4,10 +4,10 @@ const cli = require('heroku-cli-util');
 const co = require('co');
 
 function* app (context, heroku) {
-   cli.debug("This will remove all team members that DO NOT have an heroku.com or salesforce.com email address");
    if(!context.flags.team) {
       cli.error('You need to specify a Team name');
    } else {
+      cli.debug("This will remove all team members that DO NOT have an heroku.com or salesforce.com email address");
       let app = yield cli.action('getting members', co(function*(){
          let members = yield heroku.get(encodeURI('/teams/'+context.flags.team+'/members'));
          for(var i in members) {
@@ -16,7 +16,7 @@ function* app (context, heroku) {
                   method: 'DELETE',
                   path: '/teams/'+context.flags.team+'/members/'+members[i].id,
                }));
-               console.log(deleted);
+               cli.hush(deleted);
             }
          }
       }));

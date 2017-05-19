@@ -55,6 +55,8 @@ heroku demokit:resources              # Provides an output of currently used res
 ### demokit:users
 TODO - implement
 This is just functionality that is repeated with heroku members command.. probably won't implement
+Maybe to include aggregate counts of dynos / apps per team member? Interesting thought.. 
+
 ```
 heroku demokit:users                  # Count and list all the users that have access to the given Team.
 ```
@@ -62,7 +64,7 @@ heroku demokit:users                  # Count and list all the users that have a
 ### demokit:users:invite
 
 ```
-> heroku demokit:users:invite -t <TEAM> -f <path to user file>          # Will invite a list of users to the specified team.
+> heroku demokit:users:invite -t <TEAM> -f <path to users.csv>          # Will invite a list of users to the specified team.
 ```
 
 Command will read the csv file and invite users to the specified team. 
