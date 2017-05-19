@@ -5,6 +5,9 @@ const co = require('co');
 
 function * app(context, heroku)  {
    cli.error("demokit:users has yet to be implemented.... ");
+   // get users for team
+   // get apps and assign app list to owners
+   // build table of users with an app count
 }
 
 module.exports = {

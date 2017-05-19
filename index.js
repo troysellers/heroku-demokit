@@ -9,6 +9,7 @@ exports.commands = [
    require('./commands/users.js'),
    require('./commands/users_invite.js'),
    require('./commands/users_remove.js'),  
+   require('./commands/users_info.js'), 
    require('./commands/apps.js'),    
    require('./commands/apps_delete.js'),  
    require('./commands/apps_scaleToZero.js'),    

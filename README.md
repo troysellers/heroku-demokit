@@ -85,3 +85,11 @@ example3@email.com, collaborator
 ```
 
 Command will look for all users that are part of the team used for training. Any user that doesn't have an heroku.com or salesforce.com email address will be removed from the Team. 
+
+### demokit:user:info
+
+TODO - implement
+
+```
+> heroku demokit:users:info -u <USER>           # List info of apps and resources for a specific user
+```
