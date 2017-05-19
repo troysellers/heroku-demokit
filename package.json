@@ -1,0 +1,23 @@
+{
+  "name": "demokit",
+  "version": "1.0.0",
+  "description": "An extension to the Heroku CLI for Heroku SEs to manage training sessions",
+  "main": "index.js",
+  "author": "",
+  "repository": "ibigfoot/heroku-demokit",
+  "bugs": {
+    "url": "https://github.com/ibigfoot/heroku-demokit/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "co": "^4.6.0",
+    "heroku-cli-util": "^6.1.17",
+    "validator": "^7.0.0"
+  },
+  "devDependencies": {
+    "standard": "^10.0.2"
+  }
+}
