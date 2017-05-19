@@ -1,6 +1,6 @@
 # Heroku Demokit 
 
-This is an extension to the Heroku CLI that will allow a user to manage users and resources in their Heroku Team during training.
+This is an extension to the Heroku CLI that will allow a user to manage users and resources in their Heroku Team during [training](../heroku-101).
 
 ## Install
 Installing the plug requires you to link to the directory you download this code to. At the moment, there is no plans to host on npmjs.com
