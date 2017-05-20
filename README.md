@@ -88,8 +88,10 @@ Command will look for all users that are part of the team used for training. Any
 
 ### demokit:user:info
 
-TODO - implement
 
 ```
 > heroku demokit:users:info -u <USER>           # List info of apps and resources for a specific user
 ```
+
+This will retrieve a list of apps and resources that are owned by this user and display a table that lists addons by app name. 
+It will display aggregate totals once finished.
