@@ -19,6 +19,7 @@ function * app(context, heroku)  {
    // How to parellel execute? ? ? 
    for (var i in apps) {
       var app = apps[i];
+      cli.debug('Getting dynos for app '+app.name);
       app.dynoList = yield heroku.get('/apps/'+app.name+'/dynos');
       
       // identify apps created that haven't had code pushed
@@ -38,66 +39,41 @@ function * app(context, heroku)  {
    // create array of table row objects for table display by language
    var byLanguageArray = [];
    for (let language of appLanguages) {
-      apps = appsByLanguage[language];
+      var appsLanguage = appsByLanguage[language];
       var tableRow = {};
-      tableRow.language = s;
-      tableRow.installCount = apps.length;
+      tableRow.language = language;
+      tableRow.installCount = appsLanguage.length;
       tableRow.dynoCount = 0;
-      for(var i in apps) {
-         tableRow.dynoCount += apps[i].dynoList.length;
+      for(var i in appsLanguage) {
+         tableRow.dynoCount += appsLanguage[i].dynoList.length;
       }
       byLanguageArray.push(tableRow);
    }
 
    cli.styledHeader("Summary");
-   cli.styledHash({name: "Total Apps", "Total Languages": appLanguages.size, "Total Apps": apps.size});
+   cli.styledHash({"Total Languages": appLanguages.size, "Total Apps": apps.size});
+   console.log('\n');
 
-   cli.styledHeader("Apps and Dynos by Language");
+   cli.styledHeader("Apps by Language");
    // display table that shows app installs by Language
    cli.table(byLanguageArray, {
       columns: [
-         {key: 'language', label: 'Language',format: language => (language == 'Empty' ? cli.color.red(language) : '')},
-         {key: 'installCount', label: 'Installs',format: installCount => (language == 'Empty' ? cli.color.red(installCount) : '')},
-         {key: 'dynoCount',label:'Total Dynos', format: dynoCount => (language == 'Empty' ? cli.color.red(dynoCount) : '')},
+         {key: 'language', label: 'Language'},
+         {key: 'installCount', label: 'App Count'},
+         {key: 'dynoCount',label:'Total Dynos'},
       ]
-   });     
+   });   
+   console.log('\n');
+   cli.styledHeader("Apps");
+   // display table that shows app installs by Language
+   cli.table(apps, {
+      columns: [
+         {key: 'name', label: 'App Name'},
+         {key: 'buildpack_provided_description', label: 'Language'},
+         {key: 'dynoList.length',label:'Dynos'}
+      ]
+   });    
 }
-
-/*  THIS IS AN APP
-{ archived_at: null,
-    buildpack_provided_description: 'Java',
-    build_stack: 
-     { id: 'ee582d3c-717d-4a57-ba5f-8b3a39f3a817',
-       name: 'heroku-16' },
-    created_at: '2017-05-19T08:48:08Z',
-    id: '42a3181b-a16b-415c-bf03-26078b4952f8',
-    git_url: 'https://git.heroku.com/heroku-101-kt.git',
-    maintenance: false,
-    name: 'heroku-101-kt',
-    owner: 
-     { email: 'korea-training@herokumanager.com',
-       id: 'daf2207b-9c61-4e3d-be96-5c2d53c37de4' },
-    region: { id: '59accabd-516d-4f0e-83e6-6e3757701145', name: 'us' },
-    organization: 
-     { id: 'daf2207b-9c61-4e3d-be96-5c2d53c37de4',
-       name: 'korea-training' },
-    team: 
-     { id: 'daf2207b-9c61-4e3d-be96-5c2d53c37de4',
-       name: 'korea-training' },
-    space: null,
-    released_at: '2017-05-19T08:48:50Z',
-    repo_size: null,
-    slug_size: 148055704,
-    stack: 
-     { id: 'ee582d3c-717d-4a57-ba5f-8b3a39f3a817',
-       name: 'heroku-16' },
-    updated_at: '2017-05-19T08:48:50Z',
-    web_url: 'https://heroku-101-kt.herokuapp.com/',
-    joined: false,
-    legacy_id: 'app68895476@heroku.com',
-    locked: false }
-*/
-
 module.exports = {
    topic: 'demokit',
    command: 'apps',

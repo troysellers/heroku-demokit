@@ -1,4 +1,4 @@
-# Heroku Demokit 
+# Heroku Demokit (Under Construction)
 
 This is an extension to the Heroku CLI that will allow a user to manage users and resources in their Heroku Team during [training](https://github.com/ibigfoot/heroku-101).
 
@@ -53,13 +53,14 @@ heroku demokit:resources              # Provides an output of currently used res
 ```
 
 ### demokit:users
-TODO - implement
-This is just functionality that is repeated with heroku members command.. probably won't implement
-Maybe to include aggregate counts of dynos / apps per team member? Interesting thought.. 
 
 ```
 heroku demokit:users                  # Count and list all the users that have access to the given Team.
 ```
+
+This command will collect a count of all users as well as the list of apps, dyno count and language used and display. It can take a little while to run as (at the moment) it is a synchronous call to each app to get the list of dynos and collate. 
+
+Typically use this command to track how many users have accepted the invitation to the team and have started to create apps.
 
 ### demokit:users:invite
 
@@ -85,13 +86,3 @@ example3@email.com, collaborator
 ```
 
 Command will look for all users that are part of the team used for training. Any user that doesn't have an heroku.com or salesforce.com email address will be removed from the Team. 
-
-### demokit:user:info
-
-
-```
-> heroku demokit:users:info -u <USER>           # List info of apps and resources for a specific user
-```
-
-This will retrieve a list of apps and resources that are owned by this user and display a table that lists addons by app name. 
-It will display aggregate totals once finished.

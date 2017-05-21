@@ -8,59 +8,42 @@ function * app(context, heroku)  {
    // let the user know to get a cup of coffee.. 
    // TODO figure out how to parallel call API so we can remove this 
    cli.debug('Gathering apps and dyno counts... this might take a minute..');
-   
+
    let users = yield heroku.get('/teams/'+context.flags.team+'/members');
    cli.debug('We have '+users.length+' users in '+context.flags.team+' team');
-   var owners = new Set();
-   var appsByUser = {};
-
-   // initialise by UserId with empty array for apps
-   for(var i in users) {
-      owners.add(users[i].id);
-      appsByUser[users[i].id] = [];
-   }
-
+   
    // get the list of apps that we are going to aggregate
    let apps = yield heroku.get('/teams/'+context.flags.team+'/apps');
-   cli.debug('Found '+apps.length+' apps in this team '+context.flags.team);
-   var appCount = apps.length;
+   cli.debug('Gathering dyno counts for '+apps.length+' apps in '+context.flags.team+' team');
+   
+   // get the dynos operating for each app
 
-   // for each App, retrieve the list of dynos so we can aggregate
-   // How to parellel execute? ? ? 
-   for (var a in apps) {
-      cli.debug(JSON.stringify(app[a]));
-      app.dynoList = yield heroku.get('/apps/'+app[a].name+'/dynos');
-      cli.debug('Found '+app.dynoList.length+' dynos for app '+app[a].name);
-      // push app into byOwners aggregation.
-      appsByOwner[app.owner.id].push(app);
+   var funcArr = [];
+   for(var i=0 ; i<apps.length ; i++) {
+      var app = apps[i];
+      cli.debug('Get dynos for app '+app.name);
+      app.dynoList = yield heroku.get('/apps/'+app.name+'/dynos'); 
    }
 
-      // create array of table row objects for table display by owner
-   var byOwnerArray = []; 
-   for(let ownerId of owners) {
-      apps = appsByOwners[ownerId];
-      var tableRow = {};
-      tableRow.ownerEmail = apps[0].owner.email;
-      tableRow.installCount = apps.length;
-      tableRow.dynoCount = 0;
-      for(var i in apps) {
-         tableRow.dynoCount += apps[i].dynoList.length;
-      }
-   }
-
-   cli.styledHeader("Totals");
-   cli.styledHash({name: "userinfo", "total users":owners.size, "Total Apps":apps.size});
-
-      // display table that shows app installs by Owner
-   cli.styledHeader("Apps and Dynos by Owner");
-   cli.table(byOwnerArray, {
+   cli.styledHeader("Users ("+users.length+")");
+   cli.table(users, {
       columns: [
-         {key: 'ownerEmail', label: 'Owner'},
-         {key: 'installCount', label: 'Installs'},
-         {key: 'dynoCount',label:'Total Dynos'},
+         {key: 'email', label: 'User Email'},
+         {key: 'role', label: 'Role'}
+      ]
+   }); 
+   console.log('\n');
+      // display table that shows app installs by Owner
+   cli.styledHeader("Apps and Dynos");
+   cli.table(apps, {
+      columns: [
+         {key: 'name', label: 'App Name'},
+         {key: 'dynoList.length',label:'Total Dynos'}
       ]
    }); 
 }
+
+
 
 module.exports = {
    topic: 'demokit',
