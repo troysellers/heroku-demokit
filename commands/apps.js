@@ -5,74 +5,93 @@ const co = require('co');
 
 function * app(context, heroku)  {
 
-   // let the user know to get a cup of coffee.. 
-   // TODO figure out how to parallel call API so we can remove this 
-   cli.debug('Gathering apps and dyno counts... this might take a minute..');
+   cli.debug('Gathering apps....');
    
    // get the list of apps that we are going to aggregate
    let apps = yield heroku.get('/teams/'+context.flags.team+'/apps');
-   var appCount = apps.length;
-   var appsByLanguage = {};
-   var appLanguages = new Set();
+   let appCount = apps.length;
 
-   // for each App, retrieve the list of dynos so we can aggregate
-   // How to parellel execute? ? ? 
+   // gather the different language types that are used in apps
+   let appLanguages = new Set();
+
+   // collecction of calls to API for parallel execution
+   let getDynos = [];
+
    for (var i in apps) {
       var app = apps[i];
-      cli.debug('Getting dynos for app '+app.name);
-      app.dynoList = yield heroku.get('/apps/'+app.name+'/dynos');
-      
+      app.dynoList = []; // create an empty array for dynoList property
       // identify apps created that haven't had code pushed
       if(app.buildpack_provided_description == null) {
          app.buildpack_provided_description = 'Empty';
-      }
-      
-      // create the array that we use to aggregate by language
-      if(!appsByLanguage.hasOwnProperty(app.buildpack_provided_description)) {
-         appsByLanguage[app.buildpack_provided_description] = [];
-      }
-
-      // push app into byLanguages aggregation. Track language in Set for uniqueness
-      appsByLanguage[app.buildpack_provided_description].push(app);
+      }      
+      // we want a set of of all different lanugages that are being used.
       appLanguages.add(app.buildpack_provided_description);
+      getDynos.push(heroku.get('/apps/'+app.name+'/dynos'));
    }
-   // create array of table row objects for table display by language
-   var byLanguageArray = [];
-   for (let language of appLanguages) {
-      var appsLanguage = appsByLanguage[language];
-      var tableRow = {};
-      tableRow.language = language;
-      tableRow.installCount = appsLanguage.length;
-      tableRow.dynoCount = 0;
-      for(var i in appsLanguage) {
-         tableRow.dynoCount += appsLanguage[i].dynoList.length;
+   cli.debug('Gathering dynos....');
+   Promise.all(getDynos).then(dynoResults => {
+      let dynoCount = 0;
+      let emptyAppCount = 0;
+      
+      for(let i in dynoResults) {
+         let dynoResult = dynoResults[i][0];
+         if(dynoResult) {
+            dynoCount++;
+            for(let i in apps) {
+               let app = apps[i];
+               if(app.name == dynoResult.app.name) {
+                  app.dynoList.push(dynoResult);
+               }
+            }
+         } else {
+            emptyAppCount++;
+         }
       }
-      byLanguageArray.push(tableRow);
-   }
+      let appsByLanguage = {};
+      // gather all apps as lists by language
+      for(let i in apps) {
+         let app = apps[i];
+         if(!appsByLanguage.hasOwnProperty(app.buildpack_provided_description)) {
+            appsByLanguage[app.buildpack_provided_description] = [];
+         }
+         appsByLanguage[app.buildpack_provided_description].push(app);
+      }
 
-   cli.styledHeader("Summary");
-   cli.styledHash({"Total Languages": appLanguages.size, "Total Apps": apps.size});
-   console.log('\n');
+      let byLanguageArray = []; // data for table display
+      for (let language of appLanguages) {
+         let appsLanguage = appsByLanguage[language]; // get list of apps for this language
+         let tableRow = {};
+         tableRow.language = language;
+         tableRow.dynoCount = 0;
+         if(appsLanguage) {
+            tableRow.installCount = appsLanguage.length;
+            for(let i in appsLanguage) {
+               if(appsLanguage[i].dynoList != null) {
+                  tableRow.dynoCount += appsLanguage[i].dynoList.length;
+               }
+            }
+         }
+         byLanguageArray.push(tableRow);
+      }
 
-   cli.styledHeader("Apps by Language");
-   // display table that shows app installs by Language
-   cli.table(byLanguageArray, {
-      columns: [
-         {key: 'language', label: 'Language'},
-         {key: 'installCount', label: 'App Count'},
-         {key: 'dynoCount',label:'Total Dynos'},
-      ]
-   });   
-   console.log('\n');
-   cli.styledHeader("Apps");
-   // display table that shows app installs by Language
-   cli.table(apps, {
-      columns: [
-         {key: 'name', label: 'App Name'},
-         {key: 'buildpack_provided_description', label: 'Language'},
-         {key: 'dynoList.length',label:'Dynos'}
-      ]
-   });    
+      cli.styledHeader("Total Apps : "+apps.length);
+      cli.styledHeader("Total Dynos : "+dynoCount);
+      cli.styledHeader("Apps with no dynos : "+emptyAppCount);
+
+      cli.styledHeader("Apps by Language");
+      // display table that shows app installs by Language
+      cli.table(byLanguageArray, {
+         columns: [
+            {key: 'language', label: 'Language'},
+            {key: 'installCount', label: 'App Count'},
+            {key: 'dynoCount',label:'Total Dynos'},
+         ]
+      });   
+   }, errorReason => {
+      cli.error(JSON.stringify(errorReason));
+   });
+
+
 }
 module.exports = {
    topic: 'demokit',

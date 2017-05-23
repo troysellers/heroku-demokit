@@ -5,11 +5,12 @@ const co = require('co');
 
 function * app(context, heroku)  {
 
-   let apps = heroku.get('/teams/'+context.flag.team+'/apps');
+   let apps = heroku.get('/teams/'+context.flags.team+'/apps');
    yield cli.confirmApp('delete', context.flags.confirm, 'This is a destructive action and will destroy '+apps.length+' apps');
 
    // can we do this in parallel?
    for(let app in apps) {
+      cli.debug('Deleting '+app.name);
       let deleted = yield cli.action('Deleting app '+app.name, heroku.request({
             method: 'DELETE',
             path: '/apps/'+app.id,

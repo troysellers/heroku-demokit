@@ -17,21 +17,15 @@ You should see the various options for the demokit in your Heroku CLI now.
 ## Commands
 
 ### demokit:apps 
-TODO - implement
-
-Display a table of sumamrised app usage for a particular team. 
-Shows apps total, apps with code, language totals and apps that are empty.
 
 ```
 > heroku demokit:apps                   # Count and list all the apps that exist for a given Team.
 ```
-This command will list all the apps with a nice summary of apps created. It is quite useful as you go through the training to see if users are actually following along and creating new apps :) 
+Summarise apps by language and count dynos running by language in the mentioned team. 
+Lists all apps with dyno counts as well.
 
 ### demokit:apps:delete
 TODO - implement
-
-Deletes all apps for a Team. The idea of this is to be used at the end of the day when all apps need to be destroyed to save resources. 
-Include a -f --filter flag that allows a user to filter out apps (i.e. keep all apps where name contains '401')
 
 ```
 > heroku demokit:apps:delete            # Will delete all apps in the given Team.

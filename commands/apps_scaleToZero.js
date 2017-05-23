@@ -7,26 +7,39 @@ function * app(context, heroku)  {
 
    cli.debug('Gathering all apps and dyno formations for this team and setting to zero.. this could take a minute..');
    // get all apps for this team
-   let apps = heroku.get('/teams/'+context.flag.team+'/apps');
-
-   // get each formation and scale to zero.. can we do this in parallel?
-   for(let app in apps) {
-      let formations = heroku.get('/apps/'+app.id+'/formation');
-      updates = [];
-      for(let formation in formations) {
-         var update = {};
-         update.quantity = 0;
-         update.size = formation.size;
-         update.type = formation.type;
-         updates.push(update);
-      }
-      let scale = yield cli.action('Scaling all dynos for '+app.name+' to zero', heroku.request({
-            method: 'PATCH',
-            path: '/teams/'+context.flags.team+'/invitations',
-            body: updates
-         }
-      ));
+   let apps = yield heroku.get('/teams/'+context.flags.team+'/apps');
+   let allFormations = [];
+   for(let i in apps) {
+      let app = apps[i];
+      allFormations.push(heroku.get('/apps/'+app.id+'/formation'));
    }
+   Promise.all(allFormations).then(formations => {
+      // scale all dynos to zero
+      console.log(JSON.stringify(formations));
+      /*
+      for(let j in formations) {
+         let formation = formations[j][0];
+
+         if(formation.id) {
+         //cli.debug(formation);
+         //cli.debug('/apps/'+formation.app.name+'/formation/'+formation.id);
+            cli.action('Scaling all dynos for '+app.name+' to zero', heroku.request({
+               method: 'PATCH',
+               path: '/apps/'+formation.app.name+'/formation/'+formation.id,
+               body: {
+                  quantity:0,
+                  size: formation.size
+               }
+            })).then(values => {
+               cli.debug(values);
+            }, reason => {
+               cli.error(reason);
+            });
+         }
+      }*/
+   }, reason => {
+      cli.error(reason);
+   });
 }
 
 module.exports = {
