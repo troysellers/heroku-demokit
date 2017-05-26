@@ -11,7 +11,7 @@ exports.commands = [
    require('./commands/users_remove.js'),
    require('./commands/apps.js'),    
    require('./commands/apps_delete.js'),  
-   require('./commands/apps_scaleToZero.js'),    
+   require('./commands/apps_scaleDynos.js'),    
    require('./commands/resources.js')
 ]
 
