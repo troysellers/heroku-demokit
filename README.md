@@ -31,12 +31,13 @@ TODO - implement
 > heroku demokit:apps:delete            # Will delete all apps in the given Team.
 ```
 
-### demokit:apps:scaleToZero
-TODO - implement
-Scale all dynos in all apps that are listed for a team to zero. You may not want to delete apps, but want to stop incuring cost.
+### demokit:apps:scaleDynos
+
 ```
 heroku demokit:apps:scaleToZero       # Will loop through all apps in the given Team and scale all dynos to zero.
 ```
+Use this command when you want to scale all the dyno formations to all the apps in a team to the same number. Most useful for scaling all apps to zero at the end of training so cost is not incurred for running dynos. 
+When scaling it will preserve the size of each dyno formation (i.e. Standard-1X will stay a Standard-1X)
 
 ### demokit:resources
 TODO - implement
