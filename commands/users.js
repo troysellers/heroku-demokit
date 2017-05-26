@@ -5,55 +5,63 @@ const co = require('co');
 
 function * app(context, heroku)  {
 
-   // let the user know to get a cup of coffee.. 
-   // TODO figure out how to parallel call API so we can remove this 
-   cli.debug('Gathering apps and dyno counts... this might take a minute..');
+   cli.debug('Gathering users and apps .... ');
 
-   let users = yield heroku.get('/teams/'+context.flags.team+'/members');
-   cli.debug('We have '+users.length+' users in '+context.flags.team+' team');
-   
-   // get the list of apps that we are going to aggregate
-   let apps = yield heroku.get('/teams/'+context.flags.team+'/apps');
-   cli.debug('Gathering dyno counts for '+apps.length+' apps in '+context.flags.team+' team');
-   
-   // get the dynos operating for each app
+   let callArray = [];
+   callArray.push(heroku.get('/teams/'+context.flags.team+'/members'));
+   callArray.push(heroku.get('/teams/'+context.flags.team+'/apps'));
 
-   var funcArr = [];
-   for(var i=0 ; i<apps.length ; i++) {
-      var app = apps[i];
-      cli.debug('Get dynos for app '+app.name);
-      app.dynoList = yield heroku.get('/apps/'+app.name+'/dynos'); 
-   }
-
-   cli.styledHeader("Users ("+users.length+")");
-   cli.table(users, {
-      columns: [
-         {key: 'email', label: 'User Email'},
-         {key: 'role', label: 'Role'}
-      ]
-   }); 
-   console.log('\n');
-      // display table that shows app installs by Owner
-   cli.styledHeader("Apps and Dynos");
-   cli.table(apps, {
-      columns: [
-         {key: 'name', label: 'App Name'},
-         {key: 'dynoList.length',label:'Total Dynos'}
-      ]
-   }); 
+   Promise.all(callArray).then(values => {
+      let members = values[0];
+      let apps = values[1];
+      let dynoCalls = [];
+      for(let i in apps) {
+         let app = apps[i];
+         app.dynoList = [];
+         dynoCalls.push(heroku.get('/apps/'+app.name+'/dynos')); 
+      }
+      // output information about Team Members (users)
+      cli.styledHeader("Team Members ("+members.length+")");
+      cli.table(members, {
+         columns: [
+            {key: 'email', label: 'User Email'},
+            {key: 'role', label: 'Role'}
+         ]
+      }); 
+      // get all the dyno information
+      Promise.all(dynoCalls).then(dynos => {
+         for (let i in dynos) {
+            let dyno = dynos[i][0];
+            if(dyno) {
+               for (let j in apps) {
+                  let app = apps[j];
+                  if(dyno.app.name == app.name) {
+                     app.dynoList.push(dyno);
+                  }
+               }
+            }
+         }
+         cli.styledHeader("Apps and Dynos");
+         cli.table(apps, {
+            columns: [
+               {key: 'name', label: 'App Name'},
+               {key: 'dynoList.length',label:'Total Dynos'}
+            ]
+         });          
+      }, appCallError => {
+         cli.error(appCallError);
+      });
+   }, error => {
+         cli.error(error);
+   });
 }
-
-
-
 module.exports = {
    topic: 'demokit',
    command: 'users',
-   description: 'Count and list all the Users that have access for a given Team. Aggregates by User.',
-   help: '\
-   Usage: heroku demokit:users -t --team <TEAM NAME>',
+   description: 'Show users and apps',
    needsAuth: true,
    flags: [
-      {name:'team', char:'t', description:'team to invite users to', hasValue:true, required:true}
+      {name:'team', char:'t', description:'[REQUIRED] team to invite users to', hasValue:true, required:true}
    ],
    run: cli.command(co.wrap(app))
 }

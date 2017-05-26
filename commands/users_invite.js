@@ -31,9 +31,10 @@ function * app (context, heroku) {
          cli.warn("Not processing this invalid file line:"+i+":"+lines[i]);
       }
    }
+   let userArray = [];
    // valid users get sent to Heroku
    for(var i in users) {
-      let app = yield cli.action('invite user '+users[i].email+' to team '+context.flags.team +' as a '+users[i].role, heroku.request({
+      userArray.push(cli.action('invite user '+users[i].email+' to team '+context.flags.team +' as a '+users[i].role, heroku.request({
             method: 'PUT',
             path: '/teams/'+context.flags.team+'/invitations',
             body: {
@@ -41,22 +42,27 @@ function * app (context, heroku) {
                role: users[i].role
             }
          }
-      ));
+      )));
    }
+   Promise.add(userArray).then(users => {
+      for(let i in users) {
+         let u = users[i][0];
+         cli.debug(u);
+      }
+   }, error => {
+      cli.error(error);
+   })
 }
 
 
 module.exports = {
    topic: 'demokit',
    command: 'users:invite',
-   description: 'Will invite a list of users to the specified team.',
-   help: '\
-Usage: heroku demokit:users:invite --team <TEAM NAME>\n\n\
-If team is ommitted, will revert to your Personal Apps',
+   description: 'Read csv of user details and invite to the specified team.',
    needsAuth: true,
    flags: [
-      {name:'team', char:'t', description:'team to invite users to', hasValue:true, required:true},
-      {name:'file', char:'f', description:'path to csv file that has, per line, (email, [member|admin]) entries', hasValue:true, required:true}
+      {name:'team', char:'t', description:'[REQIURED] team to invite users to', hasValue:true, required:true},
+      {name:'file', char:'f', description:'[REQIURED] path to csv file that has, per line, (email, [member|admin]) entries', hasValue:true, required:true}
    ],
    run: cli.command(co.wrap(app))
 }

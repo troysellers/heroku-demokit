@@ -5,7 +5,6 @@ const co = require('co');
 
 function * app(context, heroku)  {
 
-   cli.debug('Gathering all apps and dyno formations for this team and setting to zero.. this could take a minute..');
    // get all apps for this team
    let apps = yield heroku.get('/teams/'+context.flags.team+'/apps');
    let allFormations = [];
@@ -16,6 +15,9 @@ function * app(context, heroku)  {
    Promise.all(allFormations).then(formations => {
       // scale all dynos to zero
       console.log(JSON.stringify(formations));
+
+      
+
       /*
       for(let j in formations) {
          let formation = formations[j][0];
