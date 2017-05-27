@@ -4,9 +4,6 @@ const cli = require('heroku-cli-util');
 const co = require('co');
 
 function * app(context, heroku)  {
-
-   cli.debug(context.apiToken);
-   
    let result = yield heroku.get(context.flags.path).catch(err => cli.error(err));
    cli.debug(result);
 }

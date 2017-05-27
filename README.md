@@ -34,6 +34,49 @@ Commands for demokit, type "heroku help demokit:COMMAND" for more details:
 ```
 ## Commands
 
+### demokit:api:get
+```
+Usage: heroku demokit:api:get
+
+Tests an API get command.
+
+ -p, --path PATH     # the get request to send to the api
+ ```
+ Command is a convenience for wrapping a GET request to the Heroku API. 
+ Outputs the result to the console.
+
+ e.g. - get app info 
+ ```
+heroku demokit:api:get -p '/apps/troys-pipeline-java'
+
+{ acm: false,
+  archived_at: null,
+  buildpack_provided_description: 'Java',
+  build_stack: 
+   { id: 'ee582d3c-717d-4a57-ba5f-8b3a39f3a817',
+     name: 'heroku-16' },
+  created_at: '2017-05-09T07:00:06Z',
+  id: 'a6038db6-06cd-4879-98f1-27475f2883f0',
+  git_url: 'https://git.heroku.com/troys-pipeline-java.git',
+  maintenance: false,
+  name: 'troys-pipeline-java',
+  owner: 
+   { email: 'tsellers@heroku.com',
+     id: '840e324f-7be2-48e7-950d-712a0d9211b4' },
+  region: { id: '59accabd-516d-4f0e-83e6-6e3757701145', name: 'us' },
+  organization: null,
+  team: null,
+  space: null,
+  released_at: '2017-05-10T00:02:21Z',
+  repo_size: null,
+  slug_size: 53804589,
+  stack: 
+   { id: 'ee582d3c-717d-4a57-ba5f-8b3a39f3a817',
+     name: 'heroku-16' },
+  updated_at: '2017-05-27T06:59:35Z',
+  web_url: 'https://troys-pipeline-java.herokuapp.com/' }
+ ```
+
 ### demokit:apps 
 
 ```
