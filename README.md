@@ -141,11 +141,40 @@ e.g - Scaling all dynos to zero in Personal Apps
 ```
 
 ### demokit:resources
-TODO - implement
 
-Display a table of all resources, by dyno, data and partner addons. The goal is to be able to get a summary of the total resource breakdown.
 ```
-heroku demokit:resources              # Provides an output of currently used resources for this Team.
+Usage: heroku demokit:resources
+
+Provides an output of currently used resources for this Team.
+
+ -t, --team TEAM     # team used to perform the aggregations on.
+ -v, --verbose       # display apps with addons and associtated plans.
+```
+Will provide a list of resources for either a specific team or your Personal Apps that are attached to apps. 
+
+e.g. - resources for my Personal Apps
+```
+> heroku demokit:resources 
+
+'Gathering apps for Personal Apps '
+Add On Service     Add On Name                      No. Attached Apps
+─────────────────  ───────────────────────────────  ─────────────────
+papertrail         papertrail-curly-64861           1
+heroku-kafka       kafka-round-40454                7
+heroku-postgresql  postgresql-curly-85266           1
+heroku-redis       redis-clear-98295                1
+herokuconnect      herokuconnect-horizontal-50502   1
+heroku-postgresql  postgresql-trapezoidal-19663     1
+heroku-postgresql  postgresql-regular-21943         1
+herokuconnect      herokuconnect-pointy-36846       1
+herokuconnect      herokuconnect-cylindrical-19611  1
+heroku-postgresql  postgresql-flexible-37601        1
+heroku-postgresql  postgresql-opaque-31297          1
+heroku-postgresql  postgresql-elliptical-20613      1
+heroku-postgresql  postgresql-rugged-26633          1
+=== Number of Different Services: 13
+=== Number of Distinct AddOns: 19
+=== Number of Apps with AddOns: 8
 ```
 
 ### demokit:users
