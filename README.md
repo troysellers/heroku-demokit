@@ -26,7 +26,49 @@ Count and list all the apps that exist and display dynos and buildpacks.
  -t, --team TEAM     # team to invite users to
  -v, --verbose       # provide a verbose, by app output
 ```
-Summarise apps by language and count dynos running by language. 
+Summarise apps by language and count dynos running by language, or provide a verbose output.
+
+e.g. - summary 
+```
+heroku demokit:apps -t my_team
+
+'Gathering apps.... '
+'Gathering dynos....'
+=== Total Apps : 11
+=== Total Dynos : 10
+=== Apps with no dynos : 1
+=== Apps by Language
+Language  App Count  Total Dynos
+────────  ─────────  ───────────
+Ruby      1          1
+Java      4          4
+Node.js   2          2
+Empty     1
+PHP       1          1
+Go        1          1
+Python    1          1
+```
+
+e.g. - verbose for Personal Apps
+```
+heroku demokit:apps -v 
+
+'Gathering apps.... '
+'Gathering dynos....'
+App Name                Buildpack  No. Dynos
+──────────────────────  ─────────  ─────────
+immense-reaches-72111   Ruby       1
+heroku-101-kt           Java       1
+dry-garden-97998        Java       1
+radiant-fortress-33147  Node.js    1
+empty-kt                Empty
+peaceful-inlet-89959    PHP        1
+salty-cove-42830        Go         1
+heroku-301-client-kt    Node.js    1
+heroku-201-kt           Java       1
+fast-waters-13478       Java       1
+powerful-shore-41460    Python     1
+```
 
 ### demokit:apps:delete
 TODO - implement
