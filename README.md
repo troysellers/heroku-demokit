@@ -101,10 +101,26 @@ Deleting app blooming-lake-46070... done
 ### demokit:apps:scaleDynos
 
 ```
-heroku demokit:apps:scaleToZero       # Will loop through all apps in the given Team and scale all dynos to zero.
+Usage: heroku demokit:apps:scaleDynos
+
+Scales all dynos to either zero or the given quantity, will operate on Personal Apps if not supplied a team.
+
+ -q, --quantity QUANTITY # number of dynos to scale apps to
+ -t, --team TEAM         # operate on apps belonging to this team only
 ```
+
 Use this command when you want to scale all the dyno formations to all the apps in a team to the same number. Most useful for scaling all apps to zero at the end of training so cost is not incurred for running dynos. 
 When scaling it will preserve the size of each dyno formation (i.e. Standard-1X will stay a Standard-1X)
+
+e.g - Scaling all dynos to zero in Personal Apps
+```
+> heroku demokit:apps:scaleDynos
+
+'Scaling dynos on Personal Apps to 0'
+'Gathering formations for 19 apps'
+'Scaling all formations to 0...'
+'Completed scaling all apps to 0 dynos..'
+```
 
 ### demokit:resources
 TODO - implement
