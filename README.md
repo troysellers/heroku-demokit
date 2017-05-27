@@ -3,7 +3,7 @@
 This is an extension to the Heroku CLI that will allow a user to manage users and resources in their Heroku Team during [training](https://github.com/ibigfoot/heroku-101).
 
 ## Install
-Installing the plug requires you to link to the directory you download this code to. At the moment, there is no plans to host on npmjs.com
+Installing the plug requires you to link to the directory you download this code to. At the moment, there are no plans to host on npmjs.com
 See this [devcenter article](https://devcenter.heroku.com/articles/developing-cli-plugins#installing-the-plugin) for the details.. but basically
 
 ```
@@ -14,6 +14,24 @@ See this [devcenter article](https://devcenter.heroku.com/articles/developing-cl
 ```
 You should see the various options for the demokit in your Heroku CLI now. 
 
+```
+> heroku demokit --help
+
+Usage: heroku demokit:COMMAND [command-specific-options]
+
+
+Commands for demokit, type "heroku help demokit:COMMAND" for more details:
+
+ heroku demokit:api:get                # Tests an API get command.
+ heroku demokit:apps                   # Count and list all the apps that exist and display dynos and buildpacks.
+ heroku demokit:apps:delete            # Will delete all apps in the given Team, if no team supplied, will delete Personal Apps
+ heroku demokit:apps:scaleDynos        # Scales all dynos to either zero or the given quantity, will operate on Personal Apps if not supplied a team.
+ heroku demokit:resources              # Provides an output of currently used resources for this Team.
+ heroku demokit:users                  # Show users and apps
+ heroku demokit:users:invite           # Read csv of user details and invite to the specified team.
+ heroku demokit:users:remove           # Will remove all users (except salesforce.com and heroku.com users) from the given Team.
+
+```
 ## Commands
 
 ### demokit:apps 

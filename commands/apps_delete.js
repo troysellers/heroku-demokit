@@ -14,12 +14,14 @@ function * app(context, heroku)  {
       for(let i in allApps) {
          if(!allApps[i].team) {
             apps.push(allApps[i]);
-            cli.debug('adding '+allApps[i].name+' from team '+allApps[i].team);
-         } else {
-            cli.warn('ignoring app '+allApps[i].name+' from team '+allApps[i].team.name);
-         }
+         } 
       }
    }
+   cli.table(apps, {
+      columns: [
+         {key:'name', label:'App to Delete'}
+      ]}
+   )
    yield cli.confirmApp('delete', context.flags.confirm, 'This is a destructive action and will destroy '+apps.length+' apps');
 
    let deleteCalls = [];
