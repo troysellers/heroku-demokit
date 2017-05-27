@@ -12,6 +12,7 @@ exports.commands = [
    require('./commands/apps.js'),    
    require('./commands/apps_delete.js'),  
    require('./commands/apps_scaleDynos.js'),    
-   require('./commands/resources.js')
+   require('./commands/resources.js'),
+   require('./commands/api.js')
 ]
 

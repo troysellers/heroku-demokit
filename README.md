@@ -19,10 +19,14 @@ You should see the various options for the demokit in your Heroku CLI now.
 ### demokit:apps 
 
 ```
-> heroku demokit:apps                   # Count and list all the apps that exist for a given Team.
+Usage: heroku demokit:apps
+
+Count and list all the apps that exist and display dynos and buildpacks.
+
+ -t, --team TEAM     # team to invite users to
+ -v, --verbose       # provide a verbose, by app output
 ```
-Summarise apps by language and count dynos running by language in the mentioned team. 
-Lists all apps with dyno counts as well.
+Summarise apps by language and count dynos running by language. 
 
 ### demokit:apps:delete
 TODO - implement
