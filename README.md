@@ -30,7 +30,7 @@ Summarise apps by language and count dynos running by language, or provide a ver
 
 e.g. - summary 
 ```
-heroku demokit:apps -t my_team
+> heroku demokit:apps -t my_team
 
 'Gathering apps.... '
 'Gathering dynos....'
@@ -51,7 +51,7 @@ Python    1          1
 
 e.g. - verbose for Personal Apps
 ```
-heroku demokit:apps -v 
+> heroku demokit:apps -v 
 
 'Gathering apps.... '
 'Gathering dynos....'
@@ -71,10 +71,31 @@ powerful-shore-41460    Python     1
 ```
 
 ### demokit:apps:delete
-TODO - implement
 
 ```
-> heroku demokit:apps:delete            # Will delete all apps in the given Team.
+Usage: heroku demokit:apps:delete
+
+Will delete all apps in the given Team, if no team supplied, will delete Personal Apps
+
+ -t, --team TEAM     # team to invite users to
+ --confirm CONFIRM   # confirm the destructive action of delete
+```
+
+**Destructive action that will delete all apps**, either in your Personal Apps or in the specified team. 
+
+e.g. - delete apps in a team 
+```
+> heroku demokit:apps:delete -t my_team
+ ▸    This is a destructive action and will destroy 5 apps
+ ▸    To proceed, type delete or re-run this command with --confirm delete
+
+> delete
+Deleting app vast-cliffs-83310... done
+Deleting app desolate-oasis-18389... done
+Deleting app safe-cove-19500... done
+Deleting app mysterious-wave-13699... done
+Deleting app blooming-lake-46070... done
+
 ```
 
 ### demokit:apps:scaleDynos

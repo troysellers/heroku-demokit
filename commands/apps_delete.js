@@ -25,19 +25,11 @@ function * app(context, heroku)  {
    let deleteCalls = [];
    for(let i in apps) {
       let app = apps[i];
-      deleteCalls.push(cli.action('Deleting app '+app.name, heroku.request({
+      let outcome = yield cli.action('Deleting app '+app.name, heroku.request({
             method: 'DELETE',
             path: '/apps/'+app.id,
-         })));
-   }
-   Promise.all(deleteCalls).then(values => {
-      cli.debug(values);
-      process.exit(0);
-   }).catch(err=> {
-      cli.error(err);
-      process.exit(1);
-   });
-   
+         })).catch(err => cli.error(err));
+   }   
 }
 
 module.exports = {
