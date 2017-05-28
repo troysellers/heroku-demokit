@@ -1,4 +1,4 @@
-# Heroku Demokit (Under Construction)
+# Heroku Demokit 
 
 This is an extension to the Heroku CLI that will allow a user to manage users and resources in their Heroku Team during [training](https://github.com/ibigfoot/heroku-101).
 
