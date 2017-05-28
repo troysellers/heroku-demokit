@@ -223,12 +223,26 @@ heroku-postgresql  postgresql-rugged-26633          1
 ### demokit:users
 
 ```
-heroku demokit:users                  # Count and list all the users that have access to the given Team.
-```
+Usage: heroku demokit:users
 
-This command will collect a count of all users as well as the list of apps, dyno count and language used and display. It can take a little while to run as (at the moment) it is a synchronous call to each app to get the list of dynos and collate. 
+Show users from a specific team
 
+ -t, --team TEAM     # [REQUIRED] team you want to display users associated with
+ ```
+
+This command will count and display all the users that have access to the specified team. 
 Typically use this command to track how many users have accepted the invitation to the team and have started to create apps.
+
+e.g. - Users for team my_team
+ ```
+heroku demokit:users -t my_team
+'Gathering users and apps .... '
+=== Team Members : 23
+=== Total Apps : 20
+User Email                       Role
+───────────────────────────────  ────────────
+<<USERS>>
+```
 
 ### demokit:users:invite
 

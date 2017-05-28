@@ -14,43 +14,16 @@ function * app(context, heroku)  {
    Promise.all(callArray).then(values => {
       let members = values[0];
       let apps = values[1];
-      let dynoCalls = [];
-      for(let i in apps) {
-         let app = apps[i];
-         app.dynoList = [];
-         dynoCalls.push(heroku.get('/apps/'+app.name+'/dynos')); 
-      }
+
       // output information about Team Members (users)
-      cli.styledHeader("Team Members ("+members.length+")");
+      cli.styledHeader("Team Members : "+members.length);
+      cli.styledHeader("Total Apps : "+apps.length);
       cli.table(members, {
          columns: [
             {key: 'email', label: 'User Email'},
             {key: 'role', label: 'Role'}
          ]
       }); 
-      // get all the dyno information
-      Promise.all(dynoCalls).then(dynos => {
-         for (let i in dynos) {
-            let dyno = dynos[i][0];
-            if(dyno) {
-               for (let j in apps) {
-                  let app = apps[j];
-                  if(dyno.app.name == app.name) {
-                     app.dynoList.push(dyno);
-                  }
-               }
-            }
-         }
-         cli.styledHeader("Apps and Dynos");
-         cli.table(apps, {
-            columns: [
-               {key: 'name', label: 'App Name'},
-               {key: 'dynoList.length',label:'Total Dynos'}
-            ]
-         });          
-      }, appCallError => {
-         cli.error(appCallError);
-      });
    }, error => {
          cli.error(error);
    });
@@ -58,10 +31,10 @@ function * app(context, heroku)  {
 module.exports = {
    topic: 'demokit',
    command: 'users',
-   description: 'Show users and apps',
+   description: 'Show users from a specific team',
    needsAuth: true,
    flags: [
-      {name:'team', char:'t', description:'[REQUIRED] team to invite users to', hasValue:true, required:true}
+      {name:'team', char:'t', description:'[REQUIRED] team you want to display users associated with', hasValue:true, required:true}
    ],
    run: cli.command(co.wrap(app))
 }
