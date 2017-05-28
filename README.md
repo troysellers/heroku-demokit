@@ -247,7 +247,12 @@ User Email                       Role
 ### demokit:users:invite
 
 ```
-> heroku demokit:users:invite -t <TEAM> -f <path to users.csv>          # Will invite a list of users to the specified team.
+Usage: heroku demokit:users:invite
+
+Read csv of user details and invite to the specified team.
+
+ -f, --file FILE     # [REQIURED] path to csv file that has, per line, (email, [member|admin|viewer]) entries
+ -t, --team TEAM     # [REQIURED] team to invite users to
 ```
 
 Command will read the csv file and invite users to the specified team. 
@@ -264,7 +269,13 @@ example3@email.com, collaborator
 ### demokit:users:remove
 
 ```
-> heroku demokit:users:remove -t <TEAM>          # Will remove all users (except running user) from the given Team.
+Usage: heroku demokit:users:remove
+
+Will remove all users (except salesforce.com and heroku.com users) from the given Team.
+
+ -a, --all           # include salesforce.com and heroku.com users in removal
+ -t, --team TEAM     # [REQUIRED] team to remove users from
+ --remove REMOVE     # remove users without validation
 ```
 
 Command will look for all users that are part of the team used for training. Any user that doesn't have an heroku.com or salesforce.com email address will be removed from the Team. 

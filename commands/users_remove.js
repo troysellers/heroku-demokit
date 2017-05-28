@@ -8,7 +8,7 @@ function* app (context, heroku) {
    let members = yield heroku.get(encodeURI('/teams/'+context.flags.team+'/members'));
    let deletedMembers = [];
    for(var i in members) {
-      if(members[i].email.indexOf('heroku.com') == -1 && members[i].email.indexOf('salesforce.com') == -1) {
+      if(context.flags.all || (members[i].email.indexOf('heroku.com') == -1 && members[i].email.indexOf('salesforce.com') == -1)) {
          deletedMembers.push(members[i]);
       }
    }
@@ -18,14 +18,12 @@ function* app (context, heroku) {
    // gather all calls to execute in parallel
    let deleteCalls = [];
    for(var i in deletedMembers) {
-      deleteCalls.push(cli.action('delete user '+members[i].email+' to team '+context.flags.team +' as a '+members[i].role, 
-         heroku.request({
+      deleteCalls.push(heroku.request({
             method: 'DELETE',
             path: '/teams/'+context.flags.team+'/members/'+members[i].id,
-         })));
+         }));
    }
    Promise.all(deleteCalls).then(deleted => {
-      cli.hush(deleted);
       cli.debug('We have removed '+deletedMembers.length+' members from Team '+context.flags.team);
    }, deleteError => {
       cli.error(deleteError);

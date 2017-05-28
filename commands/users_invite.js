@@ -7,7 +7,7 @@ const validator = require('validator');
 
 function * app (context, heroku) {
 
-   var allowedRoles = ["admin","collaborator","member","owner"];
+   var allowedRoles = ["admin","member","owner"];
    // read the file and parse email, access tuples into an array
    var data = fs.readFileSync(context.flags.file).toString();
    var lines = data.split("\n");
@@ -34,7 +34,7 @@ function * app (context, heroku) {
    let userArray = [];
    // valid users get sent to Heroku
    for(var i in users) {
-      userArray.push(cli.action('invite user '+users[i].email+' to team '+context.flags.team +' as a '+users[i].role, heroku.request({
+      userArray.push(heroku.request({
             method: 'PUT',
             path: '/teams/'+context.flags.team+'/invitations',
             body: {
@@ -42,12 +42,12 @@ function * app (context, heroku) {
                role: users[i].role
             }
          }
-      )));
+      ));
    }
-   Promise.add(userArray).then(users => {
+   Promise.all(userArray).then(users => {
       for(let i in users) {
-         let u = users[i][0];
-         cli.debug(u);
+         let u = users[i];
+         cli.debug('Invited '+u.user.email+' to team '+u.team.name);
       }
    }, error => {
       cli.error(error);
@@ -62,7 +62,7 @@ module.exports = {
    needsAuth: true,
    flags: [
       {name:'team', char:'t', description:'[REQIURED] team to invite users to', hasValue:true, required:true},
-      {name:'file', char:'f', description:'[REQIURED] path to csv file that has, per line, (email, [member|admin]) entries', hasValue:true, required:true}
+      {name:'file', char:'f', description:'[REQIURED] path to csv file that has, per line, (email, [member|admin|viewer]) entries', hasValue:true, required:true}
    ],
    run: cli.command(co.wrap(app))
 }
