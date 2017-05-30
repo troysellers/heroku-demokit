@@ -22,16 +22,27 @@ function * app(context, heroku)  {
          {key:'name', label:'App to Delete'}
       ]}
    )
-   yield cli.confirmApp('delete', context.flags.confirm, 'This is a destructive action and will destroy '+apps.length+' apps');
+   if(apps && apps.length > 0) {
+      yield cli.confirmApp('delete', context.flags.confirm, 'This is a destructive action and will destroy '+apps.length+' apps');
 
-   let deleteCalls = [];
-   for(let i in apps) {
-      let app = apps[i];
-      let outcome = yield cli.action('Deleting app '+app.name, heroku.request({
-            method: 'DELETE',
-            path: '/apps/'+app.id,
-         })).catch(err => cli.error(err));
-   }   
+      let deleteCalls = [];
+      for(let i in apps) {
+         let app = apps[i];
+         deleteCalls.push(heroku.request({
+               method: 'DELETE',
+               path: '/apps/'+app.id,
+            }));
+      }  
+      Promise.all(deleteCalls).then(values => {
+         for(let i in values) {
+            cli.debug('Deleted '+values[i].name);
+         }
+      }, err => {
+         cli.error(err)
+      });
+   } else {
+      cli.debug('Nothing to delete...');
+   }
 }
 
 module.exports = {
