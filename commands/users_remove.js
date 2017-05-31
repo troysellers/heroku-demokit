@@ -15,19 +15,21 @@ function* app (context, heroku) {
    // confirm with user that this action should be taken.
    yield cli.confirmApp('remove', context.flags.confirm, 'This is a destructive action and will remove all users('+deletedMembers.length+') that DO NOT have a heroku.com or salesforce.com email address');   
 
-   // gather all calls to execute in parallel
-   let deleteCalls = [];
-   for(var i in deletedMembers) {
-      deleteCalls.push(heroku.request({
-            method: 'DELETE',
-            path: '/teams/'+context.flags.team+'/members/'+members[i].id,
-         }));
+   cli.debug('Removing members... ');
+   let output = yield deletedMembers.map(deleteMember);
+   cli.table(output, {
+      columns: [
+         {key: 'email', label: 'Removed User'}
+      ]
+   })
+
+   function deleteMember(member) {  
+      cli.hush('Deleting member '+member.email);
+      return heroku.request({
+         method: 'DELETE',
+         path: '/teams/'+context.flags.team+'/members/'+member.id,
+      });
    }
-   Promise.all(deleteCalls).then(deleted => {
-      cli.debug('We have removed '+deletedMembers.length+' members from Team '+context.flags.team);
-   }, deleteError => {
-      cli.error(deleteError);
-   }); 
 }
 
 module.exports = {

@@ -6,17 +6,21 @@ const co = require('co');
 function * app(context, heroku)  {
 
    let apps = [];
+   var appsToDelete = 'Delete all apps from ';
    if(context.flags.team) {
+      appsToDelete += 'team '+context.flags.team;
       apps = yield heroku.get('/teams/'+context.flags.team+'/apps').catch(err => cli.error(err));
    }  else {
-      let allApps = yield heroku.get('/apps');
+      appsToDelete += 'Personal Apps';
+      let allApps = yield heroku.get('/apps').catch(err => cli.error(err));
       // filter out to just apps that have no team
-      for(let i in allApps) {
-         if(!allApps[i].team) {
-            apps.push(allApps[i]);
+      for(var app of allApps) {
+         if(!app.team) {
+            apps.push(app);
          } 
       }
    }
+   cli.styledHeader(appsToDelete);
    cli.table(apps, {
       columns: [
          {key:'name', label:'App to Delete'}
@@ -25,23 +29,21 @@ function * app(context, heroku)  {
    if(apps && apps.length > 0) {
       yield cli.confirmApp('delete', context.flags.confirm, 'This is a destructive action and will destroy '+apps.length+' apps');
 
-      let deleteCalls = [];
-      for(let i in apps) {
-         let app = apps[i];
-         deleteCalls.push(heroku.request({
-               method: 'DELETE',
-               path: '/apps/'+app.id,
-            }));
-      }  
-      Promise.all(deleteCalls).then(values => {
-         for(let i in values) {
-            cli.debug('Deleted '+values[i].name);
-         }
-      }, err => {
-         cli.error(err)
-      });
+      let deleted = yield apps.map(deleteApp);
+      deleted.map(printDeleted);
    } else {
       cli.debug('Nothing to delete...');
+   }
+
+   function deleteApp(app) {
+      cli.hush('Deleting app '+app.id);
+      return heroku.request({
+         method: 'DELETE',
+         path: '/apps/'+app.id,
+      });
+   }
+   function printDeleted(app) {
+      cli.debug('Deleted '+app.name);
    }
 }
 

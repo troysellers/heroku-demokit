@@ -31,27 +31,26 @@ function * app (context, heroku) {
          cli.warn("Not processing this invalid file line:"+i+":"+lines[i]);
       }
    }
-   let userArray = [];
-   // valid users get sent to Heroku
-   for(var i in users) {
-      userArray.push(heroku.request({
+   cli.debug('Inviting users... ')
+   let userOutput = yield users.map(inviteUser);
+   cli.table(userOutput, {
+      columns: [
+         {key: 'user.email', label: 'User'},
+         {key: 'role', label: 'Role'}
+      ]
+   });
+
+   function inviteUser(user) {
+      return heroku.request({
             method: 'PUT',
             path: '/teams/'+context.flags.team+'/invitations',
             body: {
-               email: users[i].email,
-               role: users[i].role
+               email: user.email,
+               role: user.role
             }
          }
-      ));
+      )
    }
-   Promise.all(userArray).then(users => {
-      for(let i in users) {
-         let u = users[i];
-         cli.debug('Invited '+u.user.email+' to team '+u.team.name);
-      }
-   }, error => {
-      cli.error(error);
-   })
 }
 
 

@@ -12,79 +12,78 @@ function * app(context, heroku)  {
       apps = yield heroku.get('/teams/'+context.flags.team+'/apps').catch(err => cli.error(err));
    }  else {
       cli.debug('Gathering apps for Personal Apps ');
-      let allApps = yield heroku.get('/apps');
+      let allApps = yield heroku.get('/apps').catch(err => cli.error(err));
       // filter out to just apps that have no team
-      for(let i in allApps) {
-         if(!allApps[i].team) {
-            apps.push(allApps[i]);
+      for(var app of allApps) {
+         if(!app.team) {
+            apps.push(app);
          } 
       }
    }
+   cli.debug('Gathering dynos for '+apps.length+' apps');
+   let data = yield apps.map(getAddons);
 
-   let addOnCalls = [];
-   for (let i in apps) {
-      addOnCalls.push(heroku.get('/apps/'+apps[i].name+'/addons'));
+   let tableData = [];
+   let aggregateData = {};
+   let addOnService = new Set();
+   let addOnPlan = new Set();
+   let addOnApp = new Set();
+   for(var addons of data) {
+      for(var addon of addons) {
+         //something to count with...
+         addOnService.add(addon.name);
+         addOnPlan.add(addon.plan);
+         addOnApp.add(addon.app.name);
+
+         // gather data for verbose mode
+         let row = {};
+         row.app = addon.app;
+         row.addon_service = addon.addon_service;
+         row.plan = addon.plan;
+         tableData.push(row);
+
+         // gather data for aggregate
+         if(!aggregateData[addon.name]) {
+            aggregateData[addon.name] = {};
+            aggregateData[addon.name].name = addon.name;
+            aggregateData[addon.name].apps = [];
+            aggregateData[addon.name].type = addon.addon_service.name;
+         }
+         aggregateData[addon.name].apps.push(addon.app.name);
+      }
+   }
+   if(context.flags.verbose) {
+      cli.table(tableData, {
+         columns: [
+            {key: 'app.name', label: 'App Name'},
+            {key: 'addon_service.name', label: 'Add On'},
+            {key: 'plan.name', label: 'Plan'}
+         ]
+      });
+   } else {
+      let data = [];
+      for(let prop in aggregateData) {
+         if(aggregateData.hasOwnProperty(prop)) {
+            data.push(aggregateData[prop]);
+         }
+      }
+      cli.table(data, {
+         columns: [
+            {key: 'type', label: 'Add On Service'},
+            {key: 'name', label: 'Add On Name'},
+            {key: 'apps.length', label: 'No. Attached Apps'}
+         ]
+      }); 
    }
 
-   Promise.all(addOnCalls).then(addons => {
-      let tableData = [];
-      let aggregateData = {};
-      let addOnService = new Set();
-      let addOnPlan = new Set();
-      let addOnApp = new Set();
-      for(let i in addons) {
-         for(let j in addons[i]) {
-            //something to count with...
-            addOnService.add(addons[i][j].name);
-            addOnPlan.add(addons[i][j].plan);
-            addOnApp.add(addons[i][j].app.name);
+   cli.styledHeader("Number of Different Services: " + addOnService.size);
+   cli.styledHeader("Number of Distinct AddOns: " + addOnPlan.size);
+   cli.styledHeader("Number of Apps with AddOns: " + addOnApp.size);
 
-            // gather data for verbose mode
-            let row = {};
-            row.app = addons[i][j].app;
-            row.addon_service = addons[i][j].addon_service;
-            row.plan = addons[i][j].plan;
-            tableData.push(row);
-
-            // gather data for aggregate
-            if(!aggregateData[addons[i][j].name]) {
-               aggregateData[addons[i][j].name] = {};
-               aggregateData[addons[i][j].name].name = addons[i][j].name;
-               aggregateData[addons[i][j].name].apps = [];
-               aggregateData[addons[i][j].name].type = addons[i][j].addon_service.name;
-            }
-            aggregateData[addons[i][j].name].apps.push(addons[i][j].app.name);
-         }
-      }
-      if(context.flags.verbose) {
-         cli.table(tableData, {
-            columns: [
-               {key: 'app.name', label: 'App Name'},
-               {key: 'addon_service.name', label: 'Add On'},
-               {key: 'plan.name', label: 'Plan'}
-            ]
-         });
-      } else {
-         let data = [];
-         for(let prop in aggregateData) {
-            if(aggregateData.hasOwnProperty(prop)) {
-               data.push(aggregateData[prop]);
-            }
-         }
-         cli.table(data, {
-            columns: [
-               {key: 'type', label: 'Add On Service'},
-               {key: 'name', label: 'Add On Name'},
-               {key: 'apps.length', label: 'No. Attached Apps'}
-            ]
-         });
-      }
-      cli.styledHeader("Number of Different Services: " + addOnService.size);
-      cli.styledHeader("Number of Distinct AddOns: " + addOnPlan.size);
-      cli.styledHeader("Number of Apps with AddOns: " + addOnApp.size);
-   }).catch(err => {
-      cli.error(err);
-   })
+   function getAddons(app) {
+      cli.hush('gathering addons for '+app.name);
+      return heroku.get('/apps/'+app.name+'/addons');
+   }
 }
 
 module.exports = {

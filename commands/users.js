@@ -5,28 +5,18 @@ const co = require('co');
 
 function * app(context, heroku)  {
 
-   cli.debug('Gathering users and apps .... ');
+   cli.debug('Gathering users .... ');
 
    let callArray = [];
-   callArray.push(heroku.get('/teams/'+context.flags.team+'/members'));
-   callArray.push(heroku.get('/teams/'+context.flags.team+'/apps'));
+   let members =  yield heroku.get('/teams/'+context.flags.team+'/members');
 
-   Promise.all(callArray).then(values => {
-      let members = values[0];
-      let apps = values[1];
-
-      // output information about Team Members (users)
-      cli.styledHeader("Team Members : "+members.length);
-      cli.styledHeader("Total Apps : "+apps.length);
-      cli.table(members, {
-         columns: [
-            {key: 'email', label: 'User Email'},
-            {key: 'role', label: 'Role'}
-         ]
-      }); 
-   }, error => {
-         cli.error(error);
-   });
+   cli.table(members, {
+      columns: [
+         {key: 'email', label: 'User Email'},
+         {key: 'role', label: 'Role'}
+      ]
+   }); 
+   cli.styledHeader('Total Users : '+members.length);
 }
 module.exports = {
    topic: 'demokit',

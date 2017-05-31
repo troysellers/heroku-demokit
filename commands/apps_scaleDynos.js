@@ -15,59 +15,43 @@ function * app(context, heroku)  {
       cli.debug('Scaling dynos on Personal Apps to '+numberOfDynos); 
       let allApps = yield heroku.get('/apps');
       // filter out to just apps that have no team
-      for(let i in allApps) {
-         if(!allApps[i].team) {
-            apps.push(allApps[i]);
+      for(var app of allApps) {
+         if(!app.team) {
+            apps.push(app);
          }
       }
    }
+   cli.debug('Gathering dyno formations for all apps....');
+   let allFormations = yield apps.map(getDynoFormation);
+   cli.debug('Scaling dyno formations for all apps....');
+   cli.debug('Complete... scaled all apps');
+   let output = yield allFormations.map(scaleFormation);
+   cli.table(output, {
+      columns: [
+         {key: 'app.name', label: 'App Name'},
+         {key: 'type', label: 'Dyno Type'},
+         {key: 'quantity', label: 'Quantity'},
+         {key: 'size', label: 'Size'}
+      ]
+   })
 
-   
-   let allFormations = [];
-   for(let i in apps) {
-      let app = apps[i];
-      allFormations.push(heroku.get('/apps/'+app.id+'/formation'));
+   function getDynoFormation(app) {
+      cli.hush('Getting dyno formation for '+app.name);
+      return heroku.get('/apps/'+app.id+'/formation')
    }
-   cli.debug('Gathering formations for '+apps.length+' apps');
-   Promise.all(allFormations).then(formations => {
 
-      let appFormations = {};
-      for(let j in formations) {
-         let formation = formations[j][0];
-         // remove any empty
-         if(formation && formation.app) {
-            if(!appFormations[formation.app.name]) {
-               appFormations[formation.app.name] = [];
-            } 
-            let formationUpdate = {};
-            formationUpdate.quantity = numberOfDynos;
-            formationUpdate.size = formation.size;
-            formationUpdate.type = formation.type;
-            appFormations[formation.app.name].push(formationUpdate);
-         }
-      }
+   function scaleFormation(formation) {
 
-      let formationCalls = [];
-      for(let name in appFormations) {
-         if(appFormations.hasOwnProperty(name)) {
-            formationCalls.push(heroku.request({
-               method: 'PATCH',
-               path: 'https://api.heroku.com/apps/'+name+'/formation',
-               body: {
-                  updates : appFormations[name]
-               }
-            }));
-         }
-      } 
-      cli.debug('Scaling all formations to '+numberOfDynos+'...');
-      Promise.all(formationCalls).then(values => {
-         cli.debug('Completed scaling all apps to '+numberOfDynos+' dynos..');
-      }, error => {
-         cli.error(error);
-      });
-   }, reason => {
-      cli.error(reason);
-   });
+      return heroku.request({
+            method: 'PATCH',
+            path: 'https://api.heroku.com/apps/'+formation[0].app.name+'/formation/'+formation[0].id,
+            body: {
+               quantity: numberOfDynos,
+               size: formation[0].size
+            }
+         });
+   }
+
 }
 
 module.exports = {

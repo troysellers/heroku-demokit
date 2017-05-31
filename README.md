@@ -36,18 +36,19 @@ Commands for demokit, type "heroku help demokit:COMMAND" for more details:
 
 ### demokit:api:get
 ```
-Usage: heroku demokit:api:get
+Usage: heroku demokit:api:get PATH
 
 Tests an API get command.
 
- -p, --path PATH     # the get request to send to the api
+Requires user to supply the path of the get request to the Heroku API.
+e.g. heroku demokit:api:get /apps
  ```
  Command is a convenience for wrapping a GET request to the Heroku API. 
  Outputs the result to the console.
 
  e.g. - get app info 
  ```
-heroku demokit:api:get -p '/apps/troys-pipeline-java'
+heroku demokit:api:get /apps/troys-pipeline-java
 
 { acm: false,
   archived_at: null,
@@ -91,44 +92,42 @@ Summarise apps by language and count dynos running by language, or provide a ver
 
 e.g. - summary 
 ```
-> heroku demokit:apps -t my_team
-
+> heroku demokit:apps
 'Gathering apps.... '
-'Gathering dynos....'
-=== Total Apps : 11
-=== Total Dynos : 10
+'Gather dynos for 9 apps'
+=== Total Apps : 9
+=== Total Dynos : 8
 === Apps with no dynos : 1
 === Apps by Language
-Language  App Count  Total Dynos
-────────  ─────────  ───────────
-Ruby      1          1
-Java      4          4
-Node.js   2          2
-Empty     1
-PHP       1          1
-Go        1          1
-Python    1          1
+Language               App Count  Total Dynos
+─────────────────────  ─────────  ───────────
+PHP                    1          1
+Empty                  1
+Clojure (Leiningen 2)  1          1
+Play 2.x - Scala       1          1
+Java                   1          1
+Ruby                   1          1
+Python                 1          1
+Go                     1          1
+Node.js                1          1
 ```
 
 e.g. - verbose for Personal Apps
 ```
-> heroku demokit:apps -v 
-
+> heroku demokit:apps -v
 'Gathering apps.... '
-'Gathering dynos....'
-App Name                Buildpack  No. Dynos
-──────────────────────  ─────────  ─────────
-immense-reaches-72111   Ruby       1
-heroku-101-kt           Java       1
-dry-garden-97998        Java       1
-radiant-fortress-33147  Node.js    1
-empty-kt                Empty
-peaceful-inlet-89959    PHP        1
-salty-cove-42830        Go         1
-heroku-301-client-kt    Node.js    1
-heroku-201-kt           Java       1
-fast-waters-13478       Java       1
-powerful-shore-41460    Python     1
+'Gather dynos for 9 apps'
+App Name               Buildpack              No. Dynos
+─────────────────────  ─────────────────────  ─────────
+agile-taiga-42739      PHP                    1
+intense-depths-71594   Empty
+morning-earth-15676    Clojure (Leiningen 2)  1
+pure-springs-43756     Play 2.x - Scala       1
+glacial-castle-10774   Java                   1
+thawing-falls-49374    Ruby                   1
+gentle-eyrie-49852     Python                 1
+glacial-gorge-69548    Go                     1
+secret-badlands-51129  Node.js                1
 ```
 
 ### demokit:apps:delete
@@ -173,14 +172,23 @@ Scales all dynos to either zero or the given quantity, will operate on Personal 
 Use this command when you want to scale all the dyno formations to all the apps in a team to the same number. Most useful for scaling all apps to zero at the end of training so cost is not incurred for running dynos. 
 When scaling it will preserve the size of each dyno formation (i.e. Standard-1X will stay a Standard-1X)
 
-e.g - Scaling all dynos to zero in Personal Apps
+e.g - Scaling all dynos to zero in team 'my_team'
 ```
-> heroku demokit:apps:scaleDynos
-
-'Scaling dynos on Personal Apps to 0'
-'Gathering formations for 19 apps'
-'Scaling all formations to 0...'
-'Completed scaling all apps to 0 dynos..'
+> heroku demokit:apps:scaleDynos -t my_team
+'Scaling all dynos for team my_team to 0'
+'Gathering dyno formations for all apps....'
+'Scaling dyno formations for all apps....'
+'Complete... scaled all apps'
+App Name                   Dyno Type  Quantity  Size
+─────────────────────────  ─────────  ────────  ───────────
+fierce-badlands-10010      web                  Standard-1X
+hidden-springs-21754       worker               Standard-1X
+safe-tor-14566             web                  Standard-1X
+afternoon-basin-30749      web                  Standard-1X
+pure-stream-56975          console              Standard-1X
+warm-ridge-65304           web                  Standard-1X
+still-peak-42092           web                  Standard-1X
+afternoon-anchorage-49612  web                  Standard-1X
 ```
 
 ### demokit:resources
@@ -195,29 +203,21 @@ Provides an output of currently used resources for this Team.
 ```
 Will provide a list of resources for either a specific team or your Personal Apps that are attached to apps. 
 
-e.g. - resources for my Personal Apps
+e.g. - resources for my team 'my_team'
 ```
-> heroku demokit:resources 
-
-'Gathering apps for Personal Apps '
-Add On Service     Add On Name                      No. Attached Apps
-─────────────────  ───────────────────────────────  ─────────────────
-papertrail         papertrail-curly-64861           1
-heroku-kafka       kafka-round-40454                7
-heroku-postgresql  postgresql-curly-85266           1
-heroku-redis       redis-clear-98295                1
-herokuconnect      herokuconnect-horizontal-50502   1
-heroku-postgresql  postgresql-trapezoidal-19663     1
-heroku-postgresql  postgresql-regular-21943         1
-herokuconnect      herokuconnect-pointy-36846       1
-herokuconnect      herokuconnect-cylindrical-19611  1
-heroku-postgresql  postgresql-flexible-37601        1
-heroku-postgresql  postgresql-opaque-31297          1
-heroku-postgresql  postgresql-elliptical-20613      1
-heroku-postgresql  postgresql-rugged-26633          1
-=== Number of Different Services: 13
-=== Number of Distinct AddOns: 19
-=== Number of Apps with AddOns: 8
+> heroku demokit:resources -t my_team
+'Gathering apps for team my_team'
+'Gathering dynos for 8 apps'
+Add On Service     Add On Name                   No. Attached Apps
+─────────────────  ────────────────────────────  ─────────────────
+heroku-postgresql  postgresql-shallow-54755      1
+heroku-postgresql  postgresql-deep-25939         1
+heroku-postgresql  postgresql-transparent-90117  1
+heroku-postgresql  postgresql-animate-35377      1
+heroku-postgresql  postgresql-angular-23931      1
+=== Number of Different Services: 5
+=== Number of Distinct AddOns: 5
+=== Number of Apps with AddOns: 5
 ```
 
 ### demokit:users
@@ -231,17 +231,15 @@ Show users from a specific team
  ```
 
 This command will count and display all the users that have access to the specified team. 
-Typically use this command to track how many users have accepted the invitation to the team and have started to create apps.
 
 e.g. - Users for team my_team
  ```
 heroku demokit:users -t my_team
-'Gathering users and apps .... '
-=== Team Members : 23
-=== Total Apps : 20
+'Gathering users .... '
 User Email                       Role
 ───────────────────────────────  ────────────
 <<USERS>>
+=== Total Users : 23
 ```
 
 ### demokit:users:invite
