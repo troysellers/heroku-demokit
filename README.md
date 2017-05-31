@@ -3,6 +3,16 @@
 This is an extension to the Heroku CLI that will allow a user to manage users and resources in their Heroku Team during [training](https://github.com/ibigfoot/heroku-101).
 
 ## Install
+The version of CLI and Node that this is currently built for is 
+```
+heroku -v
+heroku-cli/6.7.0-3680678 (darwin-x64) node-v7.9.0
+tsellers-ltm:heroku-demokit tsellers$ node -v
+v7.10.0
+```
+
+If you are using different versions you may encounter unexpected results, they are not tested (well actually, nothing is really 'tested' so caveat emptor! )
+
 Installing the plug requires you to link to the directory you download this code to. At the moment, there are no plans to host on npmjs.com
 See this [devcenter article](https://devcenter.heroku.com/articles/developing-cli-plugins#installing-the-plugin) for the details.. but basically
 
