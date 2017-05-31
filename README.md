@@ -7,8 +7,7 @@ The version of CLI and Node that this is currently built for is
 ```
 heroku -v
 heroku-cli/6.7.0-3680678 (darwin-x64) node-v7.9.0
-tsellers-ltm:heroku-demokit tsellers$ node -v
-v7.10.0
+
 ```
 
 If you are using different versions you may encounter unexpected results, they are not tested (well actually, nothing is really 'tested' so caveat emptor! )
