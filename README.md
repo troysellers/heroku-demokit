@@ -10,7 +10,7 @@ heroku-cli/6.7.0-3680678 (darwin-x64) node-v7.9.0
 
 ```
 
-If you are using different versions you may encounter unexpected results, they are not tested (well actually, nothing is really 'tested' so caveat emptor! )
+If you are using different versions you may encounter unexpected results, they are not tested (well actually, nothing is really 'tested' so [caveat emptor](https://en.wikipedia.org/wiki/Caveat_emptor)! )
 
 Installing the plug requires you to link to the directory you download this code to. At the moment, there are no plans to host on npmjs.com
 See this [devcenter article](https://devcenter.heroku.com/articles/developing-cli-plugins#installing-the-plugin) for the details.. but basically
