@@ -26,20 +26,17 @@ You should see the various options for the demokit in your Heroku CLI now.
 ```
 > heroku demokit --help
 
-Usage: heroku demokit:COMMAND [command-specific-options]
+heroku demokit commands: (heroku help demokit:COMMAND for details)
 
-
-Commands for demokit, type "heroku help demokit:COMMAND" for more details:
-
- heroku demokit:api:get                # Tests an API get command.
- heroku demokit:apps                   # Count and list all the apps that exist and display dynos and buildpacks.
- heroku demokit:apps:delete            # Will delete all apps in the given Team, if no team supplied, will delete Personal Apps
- heroku demokit:apps:scaleDynos        # Scales all dynos to either zero or the given quantity, will operate on Personal Apps if not supplied a team.
- heroku demokit:resources              # Provides an output of currently used resources for this Team.
- heroku demokit:users                  # Show users and apps
- heroku demokit:users:invite           # Read csv of user details and invite to the specified team.
- heroku demokit:users:remove           # Will remove all users (except salesforce.com and heroku.com users) from the given Team.
-
+ demokit:users           # Show users from a specific team
+ demokit:users:invite    # Read csv of user details and invite to the specified team.
+ demokit:users:remove    # Will remove all users (except salesforce.com and heroku.com users) from the given Team.
+ demokit:apps            # Count and list all the apps that exist and display dynos and buildpacks.
+ demokit:apps:delete     # Will delete all apps in the given Team, if no team supplied, will delete Personal Apps
+ demokit:apps:scaleDynos # Scales all dynos to either zero or the given quantity, will operate on Personal Apps if not supplied a team.
+ demokit:apps:deploy     # Deploys the 8 '<language>-getting-started' applications from the Heroku Github repository.
+ demokit:resources       # Provides an output of currently used resources for this Team.
+ demokit:api:get PATH    # Tests an API get command.
 ```
 ## Commands
 
@@ -165,6 +162,32 @@ Deleting app safe-cove-19500... done
 Deleting app mysterious-wave-13699... done
 Deleting app blooming-lake-46070... done
 
+```
+
+### demokit:apps:deploy
+```
+Usage: heroku demokit:apps:deploy
+
+Deploys the 8 '<language>-getting-started' applications from the Heroku Github repository.
+
+ -r, --region # what region this should be placed in
+ -t, --team   # team to invite users to
+
+```
+This will deploy the getting started language projects for you. Useful when you want to quickly show a dashboard that is populated with multiple types of languages.
+
+e.g. - Deploying to Personal Apps in US region
+```
+heroku demokit:apps:deploy 
+'Deploying https://github.com/heroku/node-js-getting-started/tarball/master'
+'Deploying https://github.com/heroku/python-getting-started/tarball/master'
+'Deploying https://github.com/heroku/java-getting-started/tarball/master'
+'Deploying https://github.com/heroku/php-getting-started/tarball/master'
+'Deploying https://github.com/heroku/ruby-getting-started/tarball/master'
+'Deploying https://github.com/heroku/clojure-getting-started/tarball/master'
+'Deploying https://github.com/heroku/go-getting-started/tarball/master'
+'Deploying https://github.com/heroku/scala-getting-started/tarball/master'
+'We have queued 8 apps for deploy'
 ```
 
 ### demokit:apps:scaleDynos
