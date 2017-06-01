@@ -1,5 +1,5 @@
 {
-  "name": "demokit",
+  "name": "heroku-cli-demokit",
   "version": "1.0.0",
   "description": "An extension to the Heroku CLI for Heroku SEs to manage training sessions",
   "main": "index.js",
