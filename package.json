@@ -18,6 +18,7 @@
     "validator": "^7.0.0"
   },
   "devDependencies": {
+    "np": "^2.15.0",
     "standard": "^10.0.2"
   }
 }
