@@ -242,18 +242,29 @@ Will provide a list of resources for either a specific team or your Personal App
 e.g. - resources for my team 'my_team'
 ```
 > heroku demokit:resources -t my_team
-'Gathering apps for team my_team'
-'Gathering dynos for 8 apps'
-Add On Service     Add On Name                   No. Attached Apps
-─────────────────  ────────────────────────────  ─────────────────
-heroku-postgresql  postgresql-shallow-54755      1
-heroku-postgresql  postgresql-deep-25939         1
-heroku-postgresql  postgresql-transparent-90117  1
-heroku-postgresql  postgresql-animate-35377      1
-heroku-postgresql  postgresql-angular-23931      1
-=== Number of Different Services: 5
-=== Number of Distinct AddOns: 5
-=== Number of Apps with AddOns: 5
+'Gathering apps for my_team '
+'Gathering addons for 3 apps'
+=== Total Apps : 3
+=== Apps with addons : 3
+=== Distinct services : 2
+=== Distinct plans : 3
+Distinct plans: heroku-kafka:beta3-mt-0
+                heroku-postgresql:hobby-dev
+                heroku-postgresql:hobby-basic
+Run with -v flag to see app and addon details
+```
+
+e.g. - verbose resources for Personal Apps
+```
+> heroku demokit:resources -v
+'Gathering apps for Personal Apps '
+'Gathering addons for 3 apps'
+App                    Addon Name                    Addon Plan                     Billing App
+─────────────────────  ────────────────────────────  ─────────────────────────────  ─────────────────────
+mt-kafka-client        kafka-triangular-19944        heroku-kafka:beta3-mt-0        mt-kafka-generator
+mt-kafka-generator     postgresql-aerodynamic-76854  heroku-postgresql:hobby-dev    mt-kafka-generator
+mt-kafka-generator     kafka-triangular-19944        heroku-kafka:beta3-mt-0        mt-kafka-generator
+tranquil-sierra-44531  postgresql-curly-66875        heroku-postgresql:hobby-basic  tranquil-sierra-44531
 ```
 
 ### demokit:users
