@@ -6,7 +6,7 @@ This is an extension to the Heroku CLI that will allow a user to manage users an
 The version of CLI and Node that this is currently built for is 
 ```
 heroku -v
-heroku-cli/6.7.0-3680678 (darwin-x64) node-v7.9.0
+heroku/7.9.3 darwin-x64 node-v10.9.0
 
 ```
 
